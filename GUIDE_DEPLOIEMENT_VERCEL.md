@@ -188,6 +188,29 @@ Dans `.vercelignore` :
 
 ---
 
+## ⚠️ Warnings npm (Normaux)
+
+### Warning : "npm warn deprecated node-domexception@1.0.0"
+
+**C'est normal !** Ce warning vient d'une dépendance transitive (une dépendance d'une dépendance). Il n'affecte pas le build ni le fonctionnement de l'application.
+
+**Pourquoi ?**
+- `node-domexception` est utilisé par une dépendance tierce
+- Les mainteneurs de cette dépendance la mettront à jour
+- En attendant, c'est juste un warning, pas une erreur
+
+**Solution :** Aucune action requise. Le build passe quand même.
+
+**Autres warnings normaux :**
+- `rimraf@3.0.2` : Dépendance transitive
+- `inflight@1.0.6` : Dépendance transitive
+- `glob@7.2.3` : Dépendance transitive
+- `eslint@8.57.1` : Sera mis à jour avec Next.js
+
+Ces warnings n'empêchent pas le déploiement.
+
+---
+
 ## 🐛 Dépannage
 
 ### Erreur : "authOptions is not a valid Route export"
