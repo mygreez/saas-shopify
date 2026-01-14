@@ -9,6 +9,8 @@ const nextConfig = {
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
+  // Configuration pour Netlify
+  output: 'standalone',
   // Améliorer la résolution des modules
   webpack: (config, { isServer }) => {
     // S'assurer que les alias sont bien résolus
