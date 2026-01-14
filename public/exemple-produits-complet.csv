@@ -1,0 +1,5 @@
+name,description,price,category,material,images,variants
+"T-shirt Premium Bio","T-shirt en coton bio, confortable et durable. Parfait pour tous les jours.",29.90,Hauts,"Coton 100% bio","https://example.com/tshirt1.jpg;https://example.com/tshirt2.jpg","S / Noir;M / Noir;L / Noir;S / Blanc;M / Blanc"
+"Sneakers Éco-responsables","Chaussures écologiques pour un style moderne et responsable",89.90,Chaussures,"Cuir végétalien","https://example.com/sneakers1.jpg|https://example.com/sneakers2.jpg","40 / Blanc;41 / Blanc;42 / Blanc;40 / Noir;41 / Noir"
+"Sac à dos Voyage","Sac spacieux et résistant, parfait pour vos aventures",59.90,Accessoires,"Polyester recyclé","https://example.com/sac1.jpg,https://example.com/sac2.jpg","Noir;Gris;Beige"
+

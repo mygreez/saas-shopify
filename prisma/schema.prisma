@@ -1,0 +1,211 @@
+// ============================================
+// SCHÉMA PRISMA - SaaS Shopify Product Manager
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// MODÈLE: User
+// ============================================
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      UserRole @default(ADMIN)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  stores      Store[]
+  partner     Partner?
+  products    Product[]
+  importJobs  ImportJob[]
+  approvals   ProductApproval[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  PARTNER
+}
+
+// ============================================
+// MODÈLE: Store
+// ============================================
+model Store {
+  id          String   @id @default(uuid())
+  shopifyShop String   @unique @map("shopify_shop")
+  accessToken String   @map("access_token")
+  ownerId     String   @map("owner_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  owner      User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  partners   Partner[]
+  products   Product[]
+  importJobs ImportJob[]
+
+  @@map("stores")
+}
+
+// ============================================
+// MODÈLE: Partner
+// ============================================
+model Partner {
+  id        String   @id @default(uuid())
+  name      String
+  storeId   String   @map("store_id")
+  userId    String   @unique @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  store   Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@map("partners")
+}
+
+// ============================================
+// MODÈLE: Product
+// ============================================
+model Product {
+  id              String        @id @default(uuid())
+  title           String
+  description     String?       @db.Text
+  vendor          String?
+  status          ProductStatus @default(DRAFT)
+  storeId         String        @map("store_id")
+  partnerId       String?       @map("partner_id")
+  shopifyProductId String?      @map("shopify_product_id")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  store     Store      @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  partner   Partner?   @relation(fields: [partnerId], references: [id], onDelete: SetNull)
+  variants  Variant[]
+  images    Image[]
+  approvals ProductApproval?
+
+  @@index([storeId])
+  @@index([partnerId])
+  @@index([status])
+  @@index([shopifyProductId])
+  @@map("products")
+}
+
+enum ProductStatus {
+  DRAFT      // Produit incomplet
+  READY      // Produit complet, prêt à publier
+  PUBLISHED  // Publié sur Shopify
+  ARCHIVED   // Archivé
+}
+
+// ============================================
+// MODÈLE: Variant
+// ============================================
+model Variant {
+  id            String   @id @default(uuid())
+  productId     String   @map("product_id")
+  option1Name   String?  @map("option1_name")
+  option1Value  String?  @map("option1_value")
+  option2Name   String?  @map("option2_name")
+  option2Value  String?  @map("option2_value")
+  price         Decimal  @db.Decimal(10, 2)
+  sku           String?  @unique
+  inventoryQty  Int      @default(0) @map("inventory_qty")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([sku])
+  @@map("variants")
+}
+
+// ============================================
+// MODÈLE: Image
+// ============================================
+model Image {
+  id        String   @id @default(uuid())
+  productId String   @map("product_id")
+  url       String   @db.Text
+  position  Int      @default(0)
+  alt       String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([productId, position])
+  @@map("images")
+}
+
+// ============================================
+// MODÈLE: ImportJob
+// ============================================
+model ImportJob {
+  id        String          @id @default(uuid())
+  status    ImportJobStatus @default(PENDING)
+  errors    Json?           // Array d'erreurs détaillées
+  fileUrl   String?         @map("file_url")
+  userId    String          @map("user_id")
+  storeId   String          @map("store_id")
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([storeId])
+  @@index([status])
+  @@map("import_jobs")
+}
+
+enum ImportJobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// ============================================
+// MODÈLE: ProductApproval (optionnel, pour historique)
+// ============================================
+model ProductApproval {
+  id        String   @id @default(uuid())
+  productId String   @unique @map("product_id")
+  adminId   String   @map("admin_id")
+  approved  Boolean
+  comment   String?   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  admin   User    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([adminId])
+  @@map("product_approvals")
+}
+
+
+
+
