@@ -54,7 +54,13 @@ export async function GET(
     }
 
     // Récupérer la soumission si elle existe
-    let submission = null;
+    let submission: {
+      id: string;
+      status: string;
+      brand: any;
+      products?: any[];
+    } | null = null;
+    
     const { data: submissionData, error: submissionError } = await supabaseAdmin
       .from('partner_submissions')
       .select(`
@@ -66,7 +72,10 @@ export async function GET(
       .single();
 
     if (!submissionError && submissionData) {
-      submission = submissionData;
+      submission = {
+        ...submissionData,
+        products: [],
+      };
 
       // Récupérer les produits si Step 2 est complété
       if (submission.status === 'step2_completed' || submission.status === 'step3_active') {
@@ -81,8 +90,6 @@ export async function GET(
         } else {
           submission.products = [];
         }
-      } else {
-        submission.products = [];
       }
     }
 
