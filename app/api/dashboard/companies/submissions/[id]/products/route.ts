@@ -64,8 +64,17 @@ export async function GET(
     }
 
     // La relation Supabase retourne toujours un tableau, même avec .single()
-    const submission = submissionData as { id: string; brand: { name: any }[] };
-    const brandName = submission.brand?.[0]?.name;
+    // Type explicite pour éviter l'erreur TypeScript
+    type SubmissionData = { 
+      id: string; 
+      brand: Array<{ name: any }> | null;
+    };
+    const submission = submissionData as SubmissionData;
+    
+    // Accès sécurisé au nom de la marque
+    const brandName = Array.isArray(submission.brand) && submission.brand.length > 0 
+      ? submission.brand[0].name 
+      : null;
 
     if (!brandName) {
       return NextResponse.json(
