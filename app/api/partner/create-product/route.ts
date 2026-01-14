@@ -322,7 +322,7 @@ export async function POST(request: NextRequest) {
 
     // Vérifier que Step 1 et 2 sont complétés
     // Utiliser le submission_id du formulaire OU récupérer depuis l'invitation
-    let submission;
+    let submission: any;
     if (submissionId) {
       // Vérifier que le submission_id fourni correspond bien à cette invitation
       const { data: submissionById, error: submissionByIdError } = await supabaseAdmin
@@ -526,7 +526,7 @@ export async function POST(request: NextRequest) {
     
     const productDetailsData = {
       product_id: product.id,
-      brand_name: validatedData.brand || submission.brand?.name || null,
+      brand_name: validatedData.brand || (Array.isArray(submission.brand) ? submission.brand[0]?.name : submission.brand?.name) || null,
       subtitle: validatedData.subtitle || null,
       sku: validatedData.sku,
       sh: validatedData.sh,
@@ -590,22 +590,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Retourner le produit avec toutes les informations
-    const productResponse = {
+    const productResponse: any = {
       ...product,
       // Ajouter les informations supplémentaires pour faciliter l'affichage
       brand: validatedData.brand || null,
-      category: validatedData.category || null,
+      category: validatedData.product_type || null,
       description: validatedData.description,
-      price_striked: validatedData.price_striked || null,
-      stock_quantity: validatedData.stock_quantity || null,
-      weight: validatedData.weight,
-      supplier_cost: validatedData.supplier_cost || null,
-      restock_delay: validatedData.restock_delay || null,
-      moq: validatedData.moq || null,
-      revalorisation_info: validatedData.revalorisation_info || null,
-      has_variants: validatedData.has_variants,
-      variant_name: validatedData.variant_name || null,
-      variant_values: validatedData.variant_values || null,
       product_details: createdDetails || null,
     };
 
