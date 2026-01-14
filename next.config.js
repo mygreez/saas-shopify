@@ -10,19 +10,21 @@ const nextConfig = {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
   // Améliorer la résolution des modules
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     // S'assurer que les alias sont bien résolus
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': path.resolve(__dirname),
     };
-    // Ajouter les extensions pour la résolution
-    config.resolve.extensions = [
-      ...config.resolve.extensions,
-      '.tsx',
-      '.ts',
-      '.jsx',
-      '.js',
+    // Ajouter les extensions pour la résolution (déjà présentes par défaut, mais on s'assure)
+    if (!config.resolve.extensions.includes('.ts')) {
+      config.resolve.extensions.unshift('.ts', '.tsx');
+    }
+    // S'assurer que les modules sont bien résolus
+    config.resolve.modules = [
+      ...(config.resolve.modules || []),
+      path.resolve(__dirname, 'node_modules'),
+      path.resolve(__dirname),
     ];
     return config;
   },
