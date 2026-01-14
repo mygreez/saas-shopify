@@ -47,7 +47,17 @@ export async function POST(
     }
 
     // Vérifier que la soumission existe et appartient à cet admin
-    const { data: submission, error: submissionError } = await supabaseAdmin
+    type SubmissionWithInvitation = {
+      id: string;
+      status: string;
+      invitation: {
+        admin_id: string;
+      } | {
+        admin_id: string;
+      }[];
+    };
+
+    const { data: submissionData, error: submissionError } = await supabaseAdmin
       .from('partner_submissions')
       .select(`
         id,
@@ -57,15 +67,19 @@ export async function POST(
       .eq('id', submission_id)
       .single();
 
-    if (submissionError || !submission) {
+    if (submissionError || !submissionData) {
       return NextResponse.json(
         { error: 'Soumission non trouvée' },
         { status: 404 }
       );
     }
 
+    // Type explicite pour éviter les erreurs TypeScript
+    const submission = submissionData as SubmissionWithInvitation;
+
     // Vérifier que l'admin est le propriétaire de cette soumission
-    if (submission.invitation.admin_id !== userId) {
+    const invitation = Array.isArray(submission.invitation) ? submission.invitation[0] : submission.invitation;
+    if (!invitation || invitation.admin_id !== userId) {
       return NextResponse.json(
         { error: 'Accès refusé : Cette soumission ne vous appartient pas' },
         { status: 403 }
