@@ -8,9 +8,3 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# Redirections pour les routes Next.js
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/nextjs"
-  status = 200
-
