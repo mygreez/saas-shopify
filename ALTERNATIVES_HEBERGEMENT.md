@@ -94,26 +94,114 @@
 
 ---
 
-## 📁 Gestionnaire de fichiers
+## 🖥️ Solutions style Hostinger (VPS avec FTP et gestionnaire de fichiers)
 
-### Option 1 : FileZilla (FTP)
+### Option 1 : Oracle Cloud Free Tier (GRATUIT ⭐)
+- ✅ **VPS gratuit** à vie (2 instances)
+- ✅ 200GB stockage
+- ✅ 10TB bandwidth/mois
+- ✅ Accès root complet
+- ✅ Support Node.js/Next.js
+- ✅ FTP/SFTP disponible
+- ⚠️ Configuration manuelle requise
+
+**Setup :**
+1. Créez un compte sur https://cloud.oracle.com
+2. Créez une instance "Always Free" (Ubuntu 22.04)
+3. Installez Node.js, PM2, Nginx
+4. Configurez FTP (vsftpd ou FileZilla Server)
+5. Installez un panel web (optionnel) : Plesk, cPanel, ou Webmin
+
+**Gestionnaire de fichiers :**
+- **FileZilla** (FTP client)
+- **Cyberduck** (FTP/SFTP)
+- **Webmin** (panel web gratuit)
+- **VS Code Remote SSH** (éditeur intégré)
+
+---
+
+### Option 2 : Hetzner VPS (€4/mois - Très bon rapport qualité/prix)
+- ✅ **€4/mois** (CX11)
+- ✅ 20GB SSD, 20TB bandwidth
+- ✅ Accès root
+- ✅ Support Node.js/Next.js
+- ✅ FTP/SFTP
+- ✅ Très performant (Allemagne/Finlande)
+
+**Setup :**
+1. https://www.hetzner.com/cloud
+2. Créez un VPS (Ubuntu 22.04)
+3. Installez Node.js, PM2, Nginx
+4. Configurez FTP
+5. Installez Webmin ou Plesk (optionnel)
+
+---
+
+### Option 3 : DigitalOcean App Platform (Gratuit avec limitations)
+- ✅ **Gratuit** (1000 heures/mois)
+- ✅ Support Next.js
+- ✅ Build automatique
+- ⚠️ Pas d'accès FTP direct
+- ⚠️ Gestion via interface web uniquement
+
+---
+
+### Option 4 : InfinityFree / 000webhost (Gratuit mais limité)
+- ✅ **Gratuit**
+- ✅ Gestionnaire de fichiers web
+- ✅ FTP disponible
+- ⚠️ **Limité à PHP** (pas de Node.js natif)
+- ⚠️ Pas adapté pour Next.js directement
+
+**Solution :** Utilisez ces hébergeurs pour les fichiers statiques uniquement, pas pour l'app Next.js.
+
+---
+
+## 📁 Gestionnaire de fichiers pour VPS
+
+### Option 1 : FileZilla (FTP Client)
 - Gratuit et open-source
 - Support FTP/SFTP
 - Interface graphique simple
+- **Téléchargement :** https://filezilla-project.org
 
 ### Option 2 : Cyberduck
 - Gratuit
 - Support FTP/SFTP/S3
 - Interface moderne
+- **Téléchargement :** https://cyberduck.io
 
-### Option 3 : VS Code Remote
+### Option 3 : Webmin (Panel web gratuit)
+- Interface web complète
+- Gestion fichiers, bases de données, services
+- Gratuit et open-source
+- **Installation :** `wget -O - https://raw.githubusercontent.com/webmin/webmin/master/setup-repos.sh | sh`
+
+### Option 4 : VS Code Remote SSH
 - Extension "Remote - SSH"
 - Éditez directement sur le serveur
 - Intégré à VS Code
+- Pas besoin de FTP, éditez en direct
 
 ---
 
 ## 🎯 Ma recommandation
+
+### Pour Next.js avec gestionnaire de fichiers (style Hostinger) :
+
+**Oracle Cloud Free Tier** + **Plesk/cPanel** ou **Hetzner VPS** (€4/mois)
+
+Pourquoi :
+1. ✅ **VPS complet** avec accès root
+2. ✅ **FTP/SFTP** disponible
+3. ✅ **Gestionnaire de fichiers** (FileZilla, Cyberduck, ou panel web)
+4. ✅ **Support Node.js/Next.js**
+5. ✅ **Base de données** PostgreSQL/MySQL
+6. ✅ **Nom de domaine** gratuit ou pas cher
+
+---
+
+### Pour Next.js simple (sans FTP) :
 
 **Cloudflare Pages** + **Nom de domaine Cloudflare Registrar**
 
