@@ -12,7 +12,7 @@ export const runtime = 'nodejs';
 export async function GET(request: NextRequest) {
   try {
     const { getServerSession } = await import('next-auth');
-    const { authOptions } = await import('@/app/api/auth/[...nextauth]/route');
+    const { authOptions } = await import('@/lib/auth-config');
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
     const isDemo = !userId || userId === 'demo-user-id';
