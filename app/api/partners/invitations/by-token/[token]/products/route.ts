@@ -111,11 +111,15 @@ export async function GET(
     return NextResponse.json({
       success: true,
       data: formattedProducts,
-      partner_info: relationships.map(rel => ({
-        id: rel.partner.id,
-        email: rel.partner.email,
-        name: rel.partner.name,
-      })),
+      partner_info: relationships.map(rel => {
+        // Supabase retourne toujours un tableau pour les relations
+        const partner = Array.isArray(rel.partner) ? rel.partner[0] : rel.partner;
+        return {
+          id: partner?.id || rel.partner_id,
+          email: partner?.email || '',
+          name: partner?.name || '',
+        };
+      }),
     });
 
   } catch (error: any) {
