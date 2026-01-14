@@ -290,11 +290,13 @@ export async function GET(request: NextRequest) {
           // 2. Il y a un brand_id
           // 3. Le brand a des informations complètes (au moins logo ou description)
           if (submission.status === 'step2_completed') {
-            const hasBrand = submission.brand_id && submission.brand;
+            // Supabase retourne toujours un tableau pour les relations
+            const brand = Array.isArray(submission.brand) ? submission.brand[0] : submission.brand;
+            const hasBrand = submission.brand_id && brand;
             const hasBrandData = hasBrand && (
-              submission.brand.logo_url || 
-              submission.brand.description || 
-              submission.brand.lifestyle_image_url
+              brand?.logo_url || 
+              brand?.description || 
+              brand?.lifestyle_image_url
             );
             
             if (!hasBrand || !hasBrandData) {

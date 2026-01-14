@@ -60,10 +60,13 @@ export async function GET(request: NextRequest) {
     // Compter les produits par partenaire
     const partnersWithStats = await Promise.all(
       (relationships || []).map(async (rel) => {
+        // Supabase retourne toujours un tableau pour les relations
+        const partner = Array.isArray(rel.partner) ? rel.partner[0] : rel.partner;
+        const partnerId = partner?.id || rel.partner_id;
         const { count } = await supabaseAdmin
           .from('products')
           .select('*', { count: 'exact', head: true })
-          .eq('partner_id', rel.partner.id);
+          .eq('partner_id', partnerId);
 
         return {
           ...rel,
