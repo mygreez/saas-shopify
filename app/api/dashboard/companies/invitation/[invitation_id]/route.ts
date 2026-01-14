@@ -54,12 +54,14 @@ export async function GET(
     }
 
     // Récupérer la soumission si elle existe
-    let submission: {
+    type SubmissionWithProducts = {
       id: string;
       status: string;
       brand: any;
-      products?: any[];
-    } | null = null;
+      products: any[];
+    };
+    
+    let submission: SubmissionWithProducts | null = null;
     
     const { data: submissionData, error: submissionError } = await supabaseAdmin
       .from('partner_submissions')
@@ -73,7 +75,9 @@ export async function GET(
 
     if (!submissionError && submissionData) {
       submission = {
-        ...submissionData,
+        id: submissionData.id,
+        status: submissionData.status,
+        brand: submissionData.brand,
         products: [],
       };
 
