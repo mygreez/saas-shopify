@@ -1,3 +1,5 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -8,15 +10,22 @@ const nextConfig = {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
   // Améliorer la résolution des modules
-  webpack: (config, { isServer }) => {
+  webpack: (config) => {
     // S'assurer que les alias sont bien résolus
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@': require('path').resolve(__dirname),
+      '@': path.resolve(__dirname),
     };
+    // Ajouter les extensions pour la résolution
+    config.resolve.extensions = [
+      ...config.resolve.extensions,
+      '.tsx',
+      '.ts',
+      '.jsx',
+      '.js',
+    ];
     return config;
   },
 }
 
 module.exports = nextConfig
-
