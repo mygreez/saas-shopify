@@ -47,7 +47,7 @@ export async function GET(
     }
 
     // Vérifier que la soumission existe et appartient à cet admin
-    const { data: submission, error: submissionError } = await supabaseAdmin
+    const { data: submissionData, error: submissionError } = await supabaseAdmin
       .from('partner_submissions')
       .select(`
         id,
@@ -56,9 +56,20 @@ export async function GET(
       .eq('id', submission_id)
       .single();
 
-    if (submissionError || !submission) {
+    if (submissionError || !submissionData) {
       return NextResponse.json(
         { error: 'Soumission non trouvée' },
+        { status: 404 }
+      );
+    }
+
+    // La relation Supabase retourne toujours un tableau, même avec .single()
+    const submission = submissionData as { id: string; brand: { name: any }[] };
+    const brandName = submission.brand?.[0]?.name;
+
+    if (!brandName) {
+      return NextResponse.json(
+        { error: 'Marque non trouvée pour cette soumission' },
         { status: 404 }
       );
     }
@@ -77,7 +88,7 @@ export async function GET(
           created_at
         )
       `)
-      .eq('brand_name', submission.brand.name);
+      .eq('brand_name', brandName);
 
     if (detailsError) {
       console.error('Erreur récupération produits:', detailsError);
